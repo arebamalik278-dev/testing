@@ -1,64 +1,48 @@
 import React, { useState } from 'react';
-import './AuthForm.css';
 
-const AuthForm = ({ role }) => {
-  const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+const AuthForm = ({ mode }) => {
+  // Fix: Safe title generation using optional chaining and a fallback
+  const formTitle = (mode?.toUpperCase()) || "AUTHENTICATION";
+
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Data ready for your future backend connection
-    const userData = { email, password, role };
-    console.log(`Submitting ${isLogin ? 'Login' : 'Signup'} for ${role}:`, userData);
-    alert(`${isLogin ? 'Logged in' : 'Signed up'} as ${role}`);
+    console.log(`Submitting ${mode} form:`, formData);
   };
 
   return (
-    <div className="auth-wrapper">
-      <div className="auth-card">
-        <div className="auth-header">
-          <h2>{role.toUpperCase()} PANEL</h2>
-          <p>{isLogin ? 'Welcome back! Please login.' : 'Create a new account.'}</p>
+    <div className="auth-container">
+      <h2>{formTitle}</h2> {/* This line is where your error was likely happening */}
+      
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label>Email</label>
+          <input 
+            type="email" 
+            value={formData.email} 
+            onChange={(e) => setFormData({...formData, email: e.target.value})}
+            required 
+          />
+        </div>
+        
+        <div className="form-group">
+          <label>Password</label>
+          <input 
+            type="password" 
+            value={formData.password} 
+            onChange={(e) => setFormData({...formData, password: e.target.value})}
+            required 
+          />
         </div>
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="input-group">
-            <label>Email Address</label>
-            <input 
-              type="email" 
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="name@company.com" 
-              required 
-            />
-          </div>
-
-          <div className="input-group">
-            <label>Password</label>
-            <input 
-              type="password" 
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••" 
-              required 
-            />
-          </div>
-
-          <button type="submit" className="auth-btn">
-            {isLogin ? 'Sign In' : 'Register'}
-          </button>
-        </form>
-
-        <div className="auth-footer">
-          <p>
-            {isLogin ? "Don't have an account?" : "Already have an account?"}
-            <span onClick={() => setIsLogin(!isLogin)}>
-              {isLogin ? ' Sign Up' : ' Login'}
-            </span>
-          </p>
-        </div>
-      </div>
+        <button type="submit">
+          {mode === 'login' ? 'Login' : 'Sign Up'}
+        </button>
+      </form>
     </div>
   );
 };
